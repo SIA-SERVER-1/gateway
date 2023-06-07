@@ -1,29 +1,44 @@
 <?php
 
-
 namespace App\Traits;
-// importing guzzle
+
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
+trait ConsumesExternalService
+{
+        public function performRequest($method, $requestUrl, $form_params = [], $headers = [])
+    {
+        $client = new Client([
+            'base_uri' => $this->baseUri,
+        ]);
 
-trait ConsumesExternalService {
+        if(isset($this->secret)){
+            $headers['Authorization'] = $this->secret;
+        }
+        
+        try {
+            $response = $client->request($method, $requestUrl, [
+                'form_params' => $form_params,
+                'headers' => $headers,
+            ]);
 
-     /**
-      *@return string
-     */
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            if ($e->hasResponse() && $e->getResponse()->getStatusCode() === 404) {
+                $responseBody = $e->getResponse()->getBody()->getContents();
+                $responseData = json_decode($responseBody, true);
+                $errorData = [
+                    'error' => $responseData['error'],
+                    'site' => $responseData['site'],
+                    'code' => $responseData['code'],
+                ];
+                // Convert the error data to JSON string
+                return json_encode($errorData);
+            }
 
-     public function performRequest($method, $requestUrl, $form_params =[], $headers =[]) {
-
-          $client = new Client([
-               'base_uri' => $this->baseUri,
-          ]);
-
-          $response = $client->request($method, $requestUrl, [
-               'form_params' => $form_params,
-               'headers' => $headers
-          ]);
-
-          return $response->getBody()->getContents();
-     }
-
+            // Re-throw the exception if it's not a 404 error
+            throw $e;
+        }
+    }
 }

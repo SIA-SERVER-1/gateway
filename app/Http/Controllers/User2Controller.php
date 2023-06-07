@@ -2,49 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request; //Handling http request from lumen
-use App\Models\User; //My Model
-use App\Traits\ApiResponser; //Standard API response
-use DB; // can be use if not using eloquent, you can use DB component in lumen
-use App\Services\User2Service;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Traits\ApiResponser;
+use App\Services\User2Service;
 
-Class UserController extends Controller {
+class User2Controller extends Controller
+{
     use ApiResponser;
-    public $user2Service;
-    private $request;
 
-    public function __construct(User2Service $user2Service)
+    private $User1Service;
+
+    public function __construct(User2Service $User2Service)
     {
-     $this->user2Service = $user2Service;
-     }
+        $this->User2Service = $User2Service;
+    }
 
-    public function getUsers()
+    public function index()
     {
-        
+        return $this->successResponse($this->User2Service->obtainUser2());
     }
-
-    public function index(){
-
+    public function add(Request $request ){
+        return $this->successResponse($this->User2Service->createUser2($request->all(), Response::HTTP_CREATED));
     }
-    
-    public function add(Request $request){
-
-    }
-
-    public function show($id){
-       
-        
-    }
-
-    public function update(Request  $request,$id)
+    public function show($id)
     {
-        
+        return $this->successResponse($this->User2Service->showUser2($id));
     }
-
-
-    public function delete($id)
+    public function updateUser(Request $request, $id)
     {
-     
+        return $this->successResponse($this->User2Service->updateUser2($request->all(),$id));
+    }
+    public function deleteUser($id)
+    {
+        return $this->successResponse($this->User2Service->deleteUser2($id));
     }
 }

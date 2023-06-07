@@ -1,45 +1,30 @@
 <?php
 
-/** @var \Laravel\Lumen\Routing\Router $router */
-
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
-
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'v1'], function($router) {
-    $router->get('/users', 'site1Controller@showUsers');
 
-    $router->get('/user/{id}', 'site1Controller@showUser');
+ $router->group(['middleware' => 'client.credentials'],function() use ($router) {
+    //  SITE 1 COMMANDS
+    $router->get('/users1',['uses' => 'User1Controller@index']);
+    $router->post('/users1',['uses' => 'User1Controller@add']);
+    $router->get('/users1/{id}',['uses' => 'User1Controller@show']);
+    $router->put('/update/users1/{id}',['uses' => 'User1Controller@updateUser']);
+    $router->delete('/users1/{id}',['uses' => 'User1Controller@deleteUser']);
 
-    $router->delete('/user/{id}', 'site1Controller@deleteUser');
+    $router->get('/userjob1',['uses' => 'UserJob1Controller@index']);
+    $router->get('/userjob1/{id}',['uses' => 'UserJob1Controller@show']);
 
-    $router->post('/user', 'site1Controller@createUser');
+    // SITE 2 COMMANDS
 
-    $router->patch('/user/{id}', 'site1Controller@patchUser');
+    $router->get('/users2',['uses' => 'User2Controller@index']);
+    $router->post('/users2',['uses' => 'User2Controller@add']);
+    $router->get('/users2/{id}',['uses' => 'User2Controller@show']);
+    $router->put('/update/users2/{id}',['uses' => 'User2Controller@updateUser']);
+    $router->delete('/users2/{id}',['uses' => 'User2Controller@deleteUser']);
+    $router->get('/userjob2',['uses' => 'UserJob2Controller@index']);
+    $router->get('/userjob2/{id}',['uses' => 'UserJob2Controller@show']);
 
-});
 
-
-$router->group(['prefix' => 'v2'], function($router) {
-    $router->get('/users', 'site2Controller@showUsers');
-
-    $router->get('/user/{id}', 'site2Controller@showUser');
-
-    $router->delete('/user/{id}', 'site2Controller@deleteUser');
-
-    $router->post('/user', 'site2Controller@createUser');
-
-    $router->patch('/user/{id}', 'site2Controller@patchUser');
-
-});
+    });
