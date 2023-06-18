@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Traits\ApiResponser;
@@ -13,7 +14,6 @@ class User1Controller extends Controller
     use ApiResponser;
 
     public $User1Service;
-
     public $User2Service;
 
     public function __construct(User1Service $User1Service, User2Service $User2Service)
@@ -31,14 +31,18 @@ class User1Controller extends Controller
     {
         if ($request->jobid <= 5)
         {
-            $this->User1Service->obtainjob1($request->jobid);
+            $this->User1Service->obtainUser1($request->jobid);
+             return $this->successResponse($this->User1Service->createUser1($request->all(), Response::HTTP_CREATED));
         }
-        else
+        elseif($request->jobid <= 10)
         {
-            $this->User2Service->obtainjob2($request->jobid);
+            $this->User2Service->obtainUser2($request->jobid);
+            return $this->successResponse($this->User1Service->createUser1($request->all(), Response::HTTP_CREATED));
+        }
+        else{
+            return response()->json(['error' => "Does not exist any instance of jobid with the given id", 'site' => 1, "code" => Response::HTTP_NOT_FOUND]);
         }
 
-        return $this->successResponse($this->User1Service->createUser1($request->all(), Response::HTTP_CREATED));
     }
 
     public function show($id)
@@ -47,6 +51,14 @@ class User1Controller extends Controller
     }
     public function updateUser(Request $request, $id)
     {
+        if ($request->jobid <= 5)
+        {
+            $this->User1Service->obtainUser1($request->jobid);
+        }
+        else 
+        {
+             $this->User2Service->obtainUser2($request->jobid);
+        }
         return $this->successResponse($this->User1Service->updateUser1($request->all(),$id));
     }
     public function deleteUser($id)
