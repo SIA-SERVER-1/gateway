@@ -54,15 +54,16 @@ class User2Controller extends Controller
         if ($request->jobid <= 5)
         {
             $this->User1Service->obtainUser1($request->jobid);
+            return $this->successResponse($this->User1Service->updateUser1($request->all(),$id));
         }
-        else 
+        elseif($request->jobid <= 10) 
         {
-            $this->User2Service->obtainUser2($request->jobid);
+             $this->User2Service->obtainUser2($request->jobid);
+             return $this->successResponse($this->User1Service->updateUser1($request->all(),$id));
         }
-        
-        return $this->successResponse($this->User2Service->updateUser2($request->all(),$id));
+        return response()->json(['error' => "Does not exist any instance of jobid with the given id", 'site' => 2, "code" => Response::HTTP_NOT_FOUND]);
     }
-    
+
     public function deleteUser($id)
     {
         return $this->successResponse($this->User2Service->deleteUser2($id));

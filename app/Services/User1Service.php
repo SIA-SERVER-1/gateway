@@ -38,7 +38,7 @@ class User1Service
     }
     public function updateUser1($data, $id)
     {
-        return $this->performRequest('PUT', "update/users1/{$id}", $data);
+        return $this->performRequest('PUT', "/users1/{$id}", $data);
     }
     public function deleteUser1($id)
     {
